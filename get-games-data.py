@@ -37,7 +37,7 @@ def parse_field(label, value):
     elif label == "platforms":
         return {label : splitter.findall(content[0].contents[0])}
     elif label == "tools_and_technologies":
-        return {label : content[0].contents}
+        return {label : splitter.findall(content[0].contents[0])}
     elif label == "credits":
         return {label : str(content[0])}
     elif label == "game_tags":
