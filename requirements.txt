@@ -1,2 +1,8 @@
 httpx
 beautifulsoup4
+numpy
+pandas
+descartes
+geopandas
+matplotlib
+pycountry

@@ -25,7 +25,7 @@ async def request(url):
 splitter = re.compile(r'(?:[^,(]|\([^)]*\))+')
 
 def parse_field(label, value):
-    content = [val.contents[0] for val in value.find_all("div", {"class":"field__item"})]
+    content = [val.contents[0] for val in value.find_all("div", {"class":"field__item"}) if val.contents]
     if label == "description":
         return {label : str(content[0])}
     elif label == "jam_site":
@@ -35,13 +35,13 @@ def parse_field(label, value):
     elif label == "diversifiers":
         return {label : content}
     elif label == "platforms":
-        return {label : splitter.findall(content[0].contents[0])}
+        return {label : [x.strip() for x in splitter.findall(content[0].contents[0])]}
     elif label == "tools_and_technologies":
-        return {label : splitter.findall(content[0].contents[0])}
+        return {label : [x.strip() for x in splitter.findall(content[0].contents[0])]} # TODO there might be a bug here
     elif label == "credits":
         return {label : str(content[0])}
     elif label == "game_tags":
-        return {label : splitter.findall(str(content[0]))}
+        return {label : [x.strip() for x in splitter.findall(str(content[0]))]}
     elif label == "executable":
         return None
     elif label == "source_files":
@@ -89,6 +89,7 @@ async def request_game_data(games_data, url):
         value = parse_field(label, field.find("div", {"class":"field__items"}))
         if value:
             game_data.update(value)
+
     games_data.append(game_data)
 
 async def request_jam_site_country(jam_site_countries, site_url):
@@ -127,8 +128,6 @@ async def request_games_data(games_data, urls, chunk_size):
 urls = [url.strip() for url in args.input]
 games_data = []
 asyncio.run(request_games_data(games_data, urls, 100))
-
-
 
 # Print results to a file
 with args.output as output_file:
